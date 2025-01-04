@@ -12,7 +12,8 @@ import pandas as pd
 #     [1, 2, 1, 2],
 # ]
 TRAIN_DATA = pd.read_csv("../datas/train_zs_30.csv").values.tolist()
-TRAIN_DATA.extend(pd.read_csv("../datas/train_extended_zs_70.csv").values.tolist())
+TRAIN_DATA.extend(pd.read_csv("../datas/train_extended_zs_70.csv").values.tolist()[:-20])
+VALID_DATA = pd.read_csv("../datas/train_extended_zs_70.csv").values.tolist()[-20:]
 
 # TEST_DATA = [
 #     [0, 1, 0, 1],
@@ -23,7 +24,7 @@ TRAIN_DATA.extend(pd.read_csv("../datas/train_extended_zs_70.csv").values.tolist
 #     [1, 2, 1, 2],
 # ]
 
-assert len(TRAIN_DATA) == 100 ## 仮コード
+# assert len(TRAIN_DATA) == 100 ## 仮コード
 
 def get_test_data(num_char_sorts: int, exp_id: int, pred_id: int) -> list[list[int]]: 
     """

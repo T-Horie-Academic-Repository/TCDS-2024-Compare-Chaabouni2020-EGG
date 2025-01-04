@@ -32,8 +32,9 @@ from egg.zoo.compo_vs_generalization.data import (
     split_train_test,
 )
 from egg.zoo.compo_vs_generalization.intervention import Evaluator, Metrics
-from egg.zoo.compo_vs_generalization.tcds_data import TRAIN_DATA, get_test_data, tidyup_receiver_output
-
+from egg.zoo.compo_vs_generalization.tcds_data import (
+    TRAIN_DATA, VALID_DATA, get_test_data, tidyup_receiver_output
+)
 import wandb
 
 NUM_PREDICTIONS = 10 ## TCDS-2024; Number of predictions
@@ -228,7 +229,7 @@ def main(params):
     ## Add TCDS-2024; record the hyperparameters and run metadata
     wandb_train = wandb.init(
         # set the wandb project where this run will be logged
-        project="TCDS2024-compare-Chaabouni2020-train-opecheck",
+        project="TCDS2024-compare-Chaabouni2020-train-grid0104",
 
         # track hyperparameters and run metadata
         config={
@@ -264,7 +265,8 @@ def main(params):
 
     train_data = one_hotify(TRAIN_DATA, opts.n_attributes, opts.n_values)
     train = ScaledDataset(train_data, opts.data_scaler)
-    validation = ScaledDataset(train_data, 1)
+    validation_data = one_hotify(VALID_DATA, opts.n_attributes, opts.n_values)
+    validation = ScaledDataset(validation_data, 1)
 
     train_loader = DataLoader(train, batch_size=opts.batch_size)
     validation_loader = DataLoader(validation, batch_size=len(validation))
@@ -406,7 +408,7 @@ def main(params):
     wandb_train.finish()
     wandb_test = wandb.init(
         # set the wandb project where this run will be logged
-        project="TCDS2024-compare-Chaabouni2020-test-opecheck",
+        project="TCDS2024-compare-Chaabouni2020-test-grid0104",
 
         # track hyperparameters and run metadata
         config={

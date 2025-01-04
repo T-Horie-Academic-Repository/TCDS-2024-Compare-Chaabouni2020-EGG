@@ -94,14 +94,26 @@ class ConsoleLogger(Callback):
         # if self.pbar.n % 10 == 0:
             tqdm.write(f"epoch {self.pbar.n} -- {summary_str}")
 
+    def aggregate_print_validation(self, loss: float, logs: Interaction, mode: str, epoch: int):
+        dump = dict(loss=loss)
+        aggregated_metrics = dict((k, v.mean().item()) for k, v in logs.aux.items())
+        dump.update(aggregated_metrics)
+
+        ## Added TCDS-2024; save the logs to a file
+        wandb.log({
+            "valid_loss": dump['loss'],
+            "valid_acc": dump['acc'],
+            "valid_acc_or": dump['acc_or'],
+        })
+
 
     def on_validation_end(self, loss: float, logs: Interaction, epoch: int):
-        self.aggregate_print(loss, logs, "test", epoch)
+        self.aggregate_print_validation(loss, logs, "valid", epoch)
 
     def on_epoch_end(self, loss: float, logs: Interaction, epoch: int):
         self.pbar.update(1)
-        if self.print_train_loss:
-            self.aggregate_print(loss, logs, "train", epoch)
+        # if self.print_train_loss:
+        self.aggregate_print(loss, logs, "train", epoch)
 
 
 class TensorboardLogger(Callback):
